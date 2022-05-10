@@ -28,6 +28,8 @@ export function Home() {
       } 
     ));
 
+    setTasks(updatedTasks);
+
     //TODO - toggle task done if exists
   };
 
