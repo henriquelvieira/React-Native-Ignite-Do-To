@@ -1,14 +1,35 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Alert  } from 'react-native';
 
 import { Header } from '../components/Header';
 import { Task, TasksList } from '../components/TasksList';
 import { TodoInput } from '../components/TodoInput';
 
+export interface EditTaskProps {
+  taskId: number; 
+  taskNewTitle: string;
+};
+
 export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
+  function validateIfTitleAlreadyExists(newTaskTitle: string): boolean {
+    const taskWithSameTitle = tasks.filter(task => task.title === newTaskTitle);
+    
+    if (taskWithSameTitle) {
+      Alert.alert('Task já cadastrada', 'Você não pode cadastrar uma task com o mesmo nome');
+      return true
+    } else {
+      return false
+    };
+  };
+
   function handleAddTask(newTaskTitle: string) {
+
+    if (validateIfTitleAlreadyExists(newTaskTitle)) {
+      return;
+    };
+
     const newTask  = {
       id: new Date().getTime(),
       title: newTaskTitle,
@@ -31,7 +52,37 @@ export function Home() {
   };
 
   function handleRemoveTask(id: number) {
-    setTasks(oldTask => oldTask.filter( task => task.id !== id));
+
+    Alert.alert('Remover item', 'Tem certeza que você deseja remover esse item?',
+                [
+                  {
+                    text: 'Não',
+                    style: 'cancel',
+                  },
+                  { 
+                    text: 'Sim', 
+                    onPress: () => setTasks(oldTask => oldTask.filter( task => task.id !== id)) 
+                  }
+                ]
+                );    
+    
+  };
+
+  function handleEditTask({ taskId, taskNewTitle } : EditTaskProps ) {
+    
+    if (validateIfTitleAlreadyExists(taskNewTitle)) {
+      return;
+    };
+    
+    const updatedTasks = tasks.map(task => (
+      {
+        id: task.id, 
+        title: task.id === taskId ? taskNewTitle : task.title, 
+        done: task.done
+      } 
+    ));
+
+    setTasks(updatedTasks);
   };
 
   return (
@@ -43,15 +94,16 @@ export function Home() {
       <TasksList 
         tasks={tasks} 
         toggleTaskDone={handleToggleTaskDone}
+        editTask={handleEditTask}
         removeTask={handleRemoveTask} 
       />
     </View>
   )
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EBEBEB'
   }
-})
+});
