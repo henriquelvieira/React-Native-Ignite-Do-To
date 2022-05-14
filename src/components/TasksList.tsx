@@ -13,7 +13,7 @@ export interface Task {
 
 export interface functionsTasksProps {
   toggleTaskDone: (id: number) => void;
-  editTask: ({ taskId, taskNewTitle } : EditTaskProps) => void;
+  editTask: ({ taskId, taskNewTitle } : EditTaskProps) => Boolean;
   removeTask: (id: number) => void;
 };
 

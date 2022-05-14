@@ -35,8 +35,13 @@ export function TaskItem ({
     };
 
     function handleSubmitEditing(){
-        editTask({taskId: task.id, taskNewTitle: taskNewTitleValue} );
-        setIsEditing(false);
+        if (editTask({taskId: task.id, taskNewTitle: taskNewTitleValue} )) {
+            setIsEditing(false);
+        } else {
+            handleCancelEditing();
+        };
+
+
     };
 
     useEffect(() => {

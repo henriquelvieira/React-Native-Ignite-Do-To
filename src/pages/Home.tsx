@@ -15,8 +15,9 @@ export function Home() {
 
   function validateIfTitleAlreadyExists(newTaskTitle: string): boolean {
     const taskWithSameTitle = tasks.filter(task => task.title === newTaskTitle);
+    console.log(taskWithSameTitle);
     
-    if (taskWithSameTitle) {
+    if (taskWithSameTitle.length > 0) {
       Alert.alert('Task já cadastrada', 'Você não pode cadastrar uma task com o mesmo nome');
       return true
     } else {
@@ -28,15 +29,16 @@ export function Home() {
 
     if (validateIfTitleAlreadyExists(newTaskTitle)) {
       return;
-    };
+    } else {
 
-    const newTask  = {
-      id: new Date().getTime(),
-      title: newTaskTitle,
-      done: false
-    } as Task;
+      const newTask  = {
+        id: new Date().getTime(),
+        title: newTaskTitle,
+        done: false
+      } as Task;
 
-    setTasks(oldTask => [...oldTask, newTask]);
+      setTasks(oldTask => [...oldTask, newTask]);
+    }
   };
 
   function handleToggleTaskDone(id: number) {
@@ -68,21 +70,23 @@ export function Home() {
     
   };
 
-  function handleEditTask({ taskId, taskNewTitle } : EditTaskProps ) {
+  function handleEditTask({ taskId, taskNewTitle } : EditTaskProps ): Boolean {
     
     if (validateIfTitleAlreadyExists(taskNewTitle)) {
-      return;
-    };
-    
-    const updatedTasks = tasks.map(task => (
-      {
-        id: task.id, 
-        title: task.id === taskId ? taskNewTitle : task.title, 
-        done: task.done
-      } 
-    ));
+      return false;
+    } else {
+      const updatedTasks = tasks.map(task => (
+        {
+          id: task.id, 
+          title: task.id === taskId ? taskNewTitle : task.title, 
+          done: task.done
+        } 
+      ));
 
-    setTasks(updatedTasks);
+      setTasks(updatedTasks);
+      return true;
+    }
+    
   };
 
   return (
